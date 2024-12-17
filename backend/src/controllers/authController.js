@@ -9,13 +9,14 @@ const sendResetEmail = require('../config/mailer');
  * @param {Object} req - Objeto de solicitud.
  * @param {Object} res - Objeto de respuesta.
  */
+
 const login = (req, res) => {
   const { correo, contrasena } = req.body;
 
   console.log('Cuerpo de la solicitud:', req.body);
 
   // Verificar que el correo y la contraseña se proporcionaron
-  if (!correo || contrasena) {
+  if (!correo || !contrasena) {
     console.log('Correo y contraseña son necesarios');
     return res.status(400).send({ error: 'Correo y contraseña son necesarios.' });
   }
@@ -87,7 +88,7 @@ const forgotPassword = (req, res) => {
     }
 
     if (results.length === 0) {
-      return res.status(404).send({ error: 'Correo no registrado.' });
+      return res.status(404).send({ error: 'Usuario no registrado. Por favor contacta con un administrador.' });
     }
 
     const resetToken = crypto.randomBytes(20).toString('hex');
@@ -102,11 +103,11 @@ const forgotPassword = (req, res) => {
 
       // Envía el correo con el token
       sendResetEmail(correo, resetToken);
-      // No incluir el token en la respuesta
-      res.send({ message: 'Se ha enviado un enlace para restablecer la contraseña a tu correo electrónico.' });
+      res.send({ message: `Ve a tu correo ${correo} y haz clic en el enlace de restablecimiento de contraseña que se te ha enviado.` });
     });
   });
 };
+
 
 /**
  * Controlador para manejar el restablecimiento de contraseñas.
